@@ -12,6 +12,7 @@ public class SimplePokerGameGUI extends JFrame {
     private Deck deck = new Deck(true);
     private final CalculateHands Calculate = new CalculateHands();
     private JPanel handValuePanel = new JPanel(new GridLayout(2, 1));
+    private JLabel RESULT = new JLabel();
 
 
     public SimplePokerGameGUI() {
@@ -21,16 +22,49 @@ public class SimplePokerGameGUI extends JFrame {
     }
 
     private void initializeCardImages() {
+        JProgressBar progressBar = new JProgressBar();
+        progressBar.setStringPainted(true);
+        progressBar.setString("Loading Images");
+        progressBar.setForeground(Color.GREEN);
+        progressBar.setBounds(40, 40, 160, 30);
+        progressBar.setMinimum(0);
+        progressBar.setMaximum(52);
+        JFrame progressFrame = new JFrame("POKER GAME BY UTKU BERKİ BAYSAL");
+        progressFrame.add(progressBar);
+        progressFrame.setSize(400, 75);
+        progressFrame.setLocationRelativeTo(null);
+        progressFrame.setVisible(true);
         for (int i = 0; i < 52; i++) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            if (i < 20 ) {
+                progressBar.setString("Loading Images.");
+            } else if (i < 35 ) {
+                progressBar.setString("Loading Cards..");
+            } else if (i < 45 ) {
+                progressBar.setString("Loading Buttons...");
+            } else {
+                progressBar.setString("Finishing...");
+            }
+            progressBar.setValue(i);
             String filename = "images/card_" + i + ".png";
             System.out.println("Loading image: " + filename);
             cardImages[i] = new ImageIcon(filename);
+            progressBar.setValue(i);
+            if (cardImages[i]==null) {
+                System.out.println("Error loading image: " + filename);
+                System.out.println("Please check that the images folder is in the same directory as the images folder.");
+            }
         }
+        progressFrame.setVisible(false);
     }
 
 
     private void initializeUI() {
-        setSize(600, 400);
+        setSize(500, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -49,14 +83,16 @@ public class SimplePokerGameGUI extends JFrame {
     private Card[] updateCardPanel(JPanel cardPanel, Deck deck) {
         cardPanel.removeAll();
         Card card;
-        Card[] hand = new Card[4];
+        Card[] hand = new Card[5];
 
-        if (deck.remainingCards() < 4) {
-            JOptionPane.showMessageDialog(this, "Not enough cards in the deck to deal a hand.", "Deck Empty", JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
+        if (deck.remainingCards() < 5) {
+            JOptionPane.showMessageDialog(this, "Not enough cards in the deck to deal a hand. To continue please reset deck.", "Deck Empty", JOptionPane.ERROR_MESSAGE);
+            Deck newDeckk = new Deck(true);
+            newDeckk.shuffle();
+            deck = newDeckk;
         }
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             card = deck.dealCard();
             if (card != null) {
                 int cardIndex = card.getValue() - 2 + card.getSuit() * 13;
@@ -77,17 +113,22 @@ public class SimplePokerGameGUI extends JFrame {
         handValuePanel.add(new JLabel(Calculate.evaluateHand(hand)));
     }
     private JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel(new GridLayout(2, 1));
-        JButton dealButton = new JButton("Deal");
-        JButton resetButton = new JButton("Reset");
+        JPanel buttonPanel = new JPanel(new GridLayout(3, 1));
+        JButton dealButton = new JButton("NEW GAME");
+        JButton resetButton = new JButton("RESET");
+        JButton exitButton = new JButton("EXIT");
 
         dealButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 deck.shuffle();
                 handValuePanel.removeAll();
-                updateHandValuePanel(handValuePanel, updateCardPanel(cardPanel1,deck));
-                updateHandValuePanel(handValuePanel, updateCardPanel(cardPanel2,deck));
+                Card[] hand1 = updateCardPanel(cardPanel1,deck);
+                Card[] hand2 = updateCardPanel(cardPanel2,deck);
+                updateHandValuePanel(handValuePanel, hand1);
+                updateHandValuePanel(handValuePanel, hand2);
+                JOptionPane.showMessageDialog(null, CompareHands.compareHands(new CalculateHands(), hand1, hand2));
+
             }
         });
         resetButton.addActionListener(new ActionListener() {
@@ -102,10 +143,18 @@ public class SimplePokerGameGUI extends JFrame {
                 cardPanel1.repaint();
                 cardPanel2.revalidate();
                 cardPanel2.repaint();
+                handValuePanel.removeAll();
+            }
+        });
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
             }
         });
         buttonPanel.add(dealButton);
         buttonPanel.add(resetButton);
+        buttonPanel.add(exitButton);
         return buttonPanel;
     }
 
