@@ -42,6 +42,17 @@ The GUI includes buttons for the following actions:
 
 Note: Ensure that the "images" folder with card images is in the same directory as the Java source files.
 
+## ScreenShots
+
+- ![image](https://github.com/gitdevutku/SimplePokerGame/assets/144778146/37bbd129-2116-4e03-8652-cf6edf84b740)
+
+- ![image](https://github.com/gitdevutku/SimplePokerGame/assets/144778146/d0381f58-2318-47fc-b9f0-fc7bd723c6c1)
+
+- ![image](https://github.com/gitdevutku/SimplePokerGame/assets/144778146/c690bbce-4464-44cb-8da2-00992e96eb5c)
+
+- ![image](https://github.com/gitdevutku/SimplePokerGame/assets/144778146/09c52ff4-b837-4c1a-8b8a-f39d93c8eb08)
+
+
 ## Dependencies
 
 - The project uses the Swing library for GUI components.
@@ -49,7 +60,7 @@ Note: Ensure that the "images" folder with card images is in the same directory 
 
 ## Contributors
 
-- Utku Berkí Baysal
+- [Utku Berki Baysal](https://github.com/gitdevutku)
 
 ## License
 
